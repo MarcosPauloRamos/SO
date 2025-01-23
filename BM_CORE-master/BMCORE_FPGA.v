@@ -32,9 +32,7 @@ module BMCORE_FPGA
 	output wire hlt, negative, lcd_on, lcd_blon, lcd_rw, lcd_en, lcd_rs,
 	output wire [6:0] mil_out, cent_out, dez_out, uni_out, dez_out_pc, uni_out_pc, dez_out_reg_address, uni_out_reg_address,
 	output wire [7:0] lcd_data,
-	output wire [15:0] input_mux_output, // output value from input mux which selects immediate/input
-	input wire uart_rx,
-	output wire uart_tx
+	output wire [15:0] input_mux_output // output value from input mux which selects immediate/input
 );
 	
 	wire [31:0] output_value;				// value stored on output value
@@ -55,10 +53,7 @@ module BMCORE_FPGA
 	wire [31:0] hd_output;					// hd output value
 	wire [31:0] selected_instruction;	// instructon output from bios_mem_mux
 	wire [5:0] exec_proc, intrpt_val;	// hardware execution process value, interruption value
-	wire [4:0] ALUcode, PRBM_out;			// ALU operation code, pre-reg bank mux output value
-	wire [15:0] uart_receive;				// connects data received by uart communication
-	wire [15:0] pre_input_mux_output;   // choice between switches or uart data
-	
+	wire [4:0] ALUcode, PRBM_out;			// ALU operation code, pre-reg bank mux output value	
 	// datapath conection wires
 	wire zero, bounce_button, true_pin_button, clk_div, intrpt;				
 	wire reg_read_shift, reg_write_shift, decoded_exec_proc;
@@ -199,9 +194,7 @@ module BMCORE_FPGA
 	
 	Mux_16 PRE_INPUT_MUX (
 		.input_data_1(switches),
-		.input_data_2(uart_receive),
-		.mux_output(pre_input_mux_output),
-		.mux_select(receive)
+		.mux_output(pre_input_mux_output)
 	);
 	
 	Mux_16 INPUT_MUX (
@@ -308,16 +301,7 @@ module BMCORE_FPGA
 		.bm_out(address_in)
 	);
 
-	/* NETWORK COMMUNICATION MODULE */
-	
-	UART_Manager UART_M (
-		.send(send),
-		.clk_auto(clk_auto),
-		.output_data(output_value),
-		.UART_RX(uart_rx),
-		.UART_TX(uart_tx),
-		.data_receive(uart_receive)
-	);
+
 	
 	/* OUTPUT MODULES */
 	
